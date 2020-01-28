@@ -52,6 +52,8 @@ class dec_series(object):
 
     
     def qiffy_frac(self, f):
+        return self.qiffy_poly(f.numerator())/self.qiffy_poly(f.denominator())    
+
         if f in self.Rg:
             return self.qiffy_poly(f)
         if f in self.Fg:
