@@ -38,12 +38,8 @@ class dec_series(object):
     def qiffy_diff(self,f,dlist):
         fcur = f
         for xj in dlist:
-            print xj
             fcur = sum(( diff(fcur, gi) * self.dgdx(gi,xj) for gi in self.gvars )) + diff(fcur,xj)
-            print "done"
-        print "done with loop",fcur
         fcur0 = fcur.subs({xi:0 for xi in self.xvars})
-        print "done with subs", fcur0
         return self.qiffy_frac(fcur0)
     
     @cached_method
@@ -56,20 +52,14 @@ class dec_series(object):
 
     
     def qiffy_frac(self, f):
-        print "entered qiffy"
         if f in self.Rg:
-            print "poly path"
             return self.qiffy_poly(f)
         if f in self.Fg:
-            print "rate path"
-            f=Fg(f)
-            print "done coercing"
-            return self.qiffy_poly(f.numerator())/qiffy_poly(f.denominator())
-        return self.qiffy_frac(Fg(f))
+            return self.qiffy_poly(f.numerator())/self.qiffy_poly(f.denominator())
+        return self.qiffy_frac(self.Fg(f))
 
     def qiffy_poly(self,f):
-        fsym = self.e.from_polynomial(self.Rg(f)).restrict_parts(N)
-        
+        fsym = self.e.from_polynomial(self.Rg(f)).restrict_parts(self.N)
         result = 0
         for part, coef in fsym.monomial_coefficients().items():
             part_result = 1
